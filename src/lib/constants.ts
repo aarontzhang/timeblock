@@ -1,4 +1,4 @@
-import { Category } from '../types';
+import type { Category } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const DEFAULT_CATEGORIES: Category[] = [

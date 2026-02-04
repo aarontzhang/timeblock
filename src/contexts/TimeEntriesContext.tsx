@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import {
   collection,
   query,
@@ -12,7 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { TimeEntry } from '../types';
+import type { TimeEntry } from '../types';
 import { useAuth } from './AuthContext';
 
 interface TimeEntriesContextType {

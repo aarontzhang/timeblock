@@ -5,7 +5,7 @@ import { useTimeEntries } from '../../contexts/TimeEntriesContext';
 import { generateTimeBlocks, formatTime } from '../../lib/utils';
 import { TimeBlockItem } from './TimeBlockItem';
 import { LogPrompt } from './LogPrompt';
-import { TimeBlock } from '../../types';
+import type { TimeBlock } from '../../types';
 
 export function TimeGrid() {
   const { userProfile } = useAuth();

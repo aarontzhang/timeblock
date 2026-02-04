@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTimeEntries } from '../../contexts/TimeEntriesContext';
 import { calculateCategoryStats, getTimePeriodDates } from '../../lib/utils';
 import { TIME_PERIODS } from '../../lib/constants';
-import { TimePeriod } from '../../types';
+import type { TimePeriod } from '../../types';
 
 export function StatsView() {
   const { userProfile } = useAuth();
@@ -129,7 +129,7 @@ export function StatsView() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => formatDuration(value)}
+                    formatter={(value) => formatDuration(value as number)}
                     labelFormatter={(name) => name}
                   />
                 </PieChart>

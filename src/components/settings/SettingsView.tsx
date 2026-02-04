@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { TimeBlockDuration, Category, Subcategory } from '../../types';
+import type { TimeBlockDuration, Category, Subcategory } from '../../types';
 import { TIME_BLOCK_DURATIONS } from '../../lib/constants';
 import { getDurationLabel } from '../../lib/utils';
 import { v4 as uuidv4 } from 'uuid';

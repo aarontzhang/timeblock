@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTimeEntries } from '../../contexts/TimeEntriesContext';
-import { TimeBlock, Category } from '../../types';
+import type { TimeBlock } from '../../types';
 import { formatTimeRange } from '../../lib/utils';
 
 interface LogPromptProps {

@@ -1,5 +1,5 @@
 import { startOfDay, addMinutes, format, isWithinInterval } from 'date-fns';
-import { TimeBlock, TimeBlockDuration, TimeEntry } from '../types';
+import type { TimeBlock, TimeBlockDuration, TimeEntry } from '../types';
 
 export function generateTimeBlocks(
   date: Date,

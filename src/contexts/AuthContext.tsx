@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
-  User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -11,7 +11,8 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { UserProfile } from '../types';
+import type { UserProfile } from '../types';
+import type { User } from 'firebase/auth';
 import { DEFAULT_CATEGORIES } from '../lib/constants';
 
 interface AuthContextType {

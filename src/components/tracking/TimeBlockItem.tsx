@@ -1,4 +1,4 @@
-import { TimeBlock, Category } from '../../types';
+import type { TimeBlock, Category } from '../../types';
 
 interface TimeBlockItemProps {
   block: TimeBlock;
