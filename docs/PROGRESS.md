@@ -1,6 +1,6 @@
 # TimeBlock - Development Progress
 
-## Project Status: 🟡 In Development
+## Project Status: 🟢 MVP Complete
 
 ---
 
@@ -25,64 +25,60 @@
 - [x] Created PRD document (`docs/PRD.md`)
 - [x] Created this progress document (`docs/PROGRESS.md`)
 
----
-
-## In Progress 🔄
-
 ### Phase 2: Authentication
-- [ ] Auth context and provider
-- [ ] useAuth hook
-- [ ] Login form component
-- [ ] AuthGuard component
-- [ ] Firebase Auth integration
+- [x] Auth context and provider (`src/contexts/AuthContext.tsx`)
+- [x] useAuth hook (exported from AuthContext)
+- [x] Login form component with email/password + Google sign-in
+- [x] AuthGuard component for protected routes
+- [x] Firebase Auth integration
 
 ### Phase 3: Core UI
-- [ ] Layout component (header, navigation)
-- [ ] Time tracking view
-- [ ] Stats view
-- [ ] Settings view
+- [x] Layout component with header and navigation
+- [x] Bottom navigation bar (Track, Stats, Settings)
+- [x] Responsive design foundation
+
+### Phase 4: Time Tracking
+- [x] TimeGrid component - Google Calendar-inspired vertical timeline
+- [x] TimeBlockItem component - individual time block display
+- [x] LogPrompt modal - category/subcategory selection
+- [x] Date navigation (prev/next day, today button)
+- [x] Current block highlighting with auto-scroll
+- [x] Time entry CRUD operations via Firestore
+
+### Phase 5: Statistics
+- [x] StatsView with interactive pie chart
+- [x] Time period filters (1d, 3d, 1w, 1m)
+- [x] Click category to drill down into subcategories
+- [x] Category list with hours and percentages
+
+### Phase 6: Category Management
+- [x] SettingsView with full category management
+- [x] Add/edit/delete categories
+- [x] Add/edit/delete subcategories
+- [x] Color picker for categories
+- [x] Time block duration selector (15min, 30min, 1h, 2h)
 
 ---
 
 ## Pending 📋
 
-### Phase 4: Time Tracking
-- [ ] TimeGrid component
-- [ ] TimeBlock component
-- [ ] LogPrompt modal
-- [ ] CategoryPicker component
-- [ ] Time entry CRUD operations
-
-### Phase 5: Statistics
-- [ ] PieChart component
-- [ ] TimeFilter component
-- [ ] CategoryList component
-- [ ] Subcategory drill-down
-
-### Phase 6: Category Management
-- [ ] CategoryManager component
-- [ ] Add/edit/delete categories
-- [ ] Add/edit/delete subcategories
-- [ ] Color picker
-
-### Phase 7: Notifications
+### Phase 7: Notifications (Future)
 - [ ] useNotifications hook
-- [ ] In-app prompts
+- [ ] In-app prompts when block ends
 - [ ] Browser notification permission
 - [ ] Push notifications on block end
 
-### Phase 8: Polish
-- [ ] Loading states
-- [ ] Error handling
-- [ ] Responsive design
-- [ ] PWA icons
-- [ ] Final testing
+### Phase 8: Polish (Future)
+- [ ] Proper PWA icons (currently placeholders)
+- [ ] Dark mode
+- [ ] Data export
+- [ ] Onboarding flow
 
 ---
 
 ## Known Issues 🐛
 
-*None yet*
+*None currently*
 
 ---
 
@@ -92,8 +88,11 @@
 Before running the app, you need to:
 1. Create a Firebase project at console.firebase.google.com
 2. Enable Email/Password and Google authentication
-3. Create a Firestore database
-4. Copy the config values to `.env.local`:
+3. Create a Firestore database (start in test mode)
+4. Create a composite index for timeEntries collection:
+   - Collection: `timeEntries`
+   - Fields: `userId` (Ascending), `startTime` (Descending)
+5. Copy the config values to `.env.local`:
    ```
    VITE_FIREBASE_API_KEY=...
    VITE_FIREBASE_AUTH_DOMAIN=...
@@ -109,11 +108,22 @@ cd /Users/aaronzhang/Desktop/timeblock
 npm run dev
 ```
 
+### Building for Production
+```bash
+npm run build
+npm run preview
+```
+
 ---
 
 ## Changelog
 
-### 2024-02-04
-- Initial project setup
-- Created documentation
-- Configured build tools and dependencies
+### 2026-02-04
+- Initial MVP complete
+- All core features implemented:
+  - User authentication (email + Google)
+  - Time tracking with configurable blocks
+  - Category management
+  - Statistics with pie charts
+- Project builds successfully
+- Ready for Firebase configuration and testing
