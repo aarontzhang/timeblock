@@ -1,10 +1,39 @@
 import { useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTimeEntries } from '../../contexts/TimeEntriesContext';
 import { calculateCategoryStats, getTimePeriodDates } from '../../lib/utils';
 import { TIME_PERIODS } from '../../lib/constants';
 import type { TimePeriod } from '../../types';
+
+function generateColorShades(baseColor: string, count: number): string[] {
+  const shades: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const lightness = 45 + (i * 12);
+    const saturation = 70 - (i * 8);
+    shades.push(hexToHSLString(baseColor, saturation, lightness));
+  }
+  return shades;
+}
+
+function hexToHSLString(hex: string, saturation: number, lightness: number): string {
+  hex = hex.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  if (max !== min) {
+    const d = max - min;
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return `hsl(${Math.round(h * 360)}, ${saturation}%, ${lightness}%)`;
+}
 
 export function StatsView() {
   const { userProfile } = useAuth();
@@ -13,33 +42,45 @@ export function StatsView() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   const categories = userProfile?.categories || [];
+  const duration = userProfile?.timeBlockDuration || 30;
 
   const { start, end } = getTimePeriodDates(timePeriod);
   const entries = getEntriesForDateRange(start, end);
 
   const stats = useMemo(() => {
-    return calculateCategoryStats(entries, categories);
-  }, [entries, categories]);
+    return calculateCategoryStats(entries, categories, { start, end }, duration);
+  }, [entries, categories, start, end, duration]);
 
   const totalMinutes = Object.values(stats).reduce((sum, cat) => sum + cat.minutes, 0);
 
-  const pieData = Object.entries(stats).map(([id, data]) => ({
-    id,
-    name: data.name,
-    value: data.minutes,
-    color: data.color,
-    percentage: totalMinutes > 0 ? (data.minutes / totalMinutes) * 100 : 0,
-  }));
+  const pieData = Object.entries(stats)
+    .map(([id, data]) => ({
+      id,
+      name: data.name,
+      value: data.minutes,
+      color: data.color,
+      percentage: totalMinutes > 0 ? (data.minutes / totalMinutes) * 100 : 0,
+    }))
+    .sort((a, b) => b.value - a.value);
 
   const selectedCategory = selectedCategoryId ? stats[selectedCategoryId] : null;
+
+  const subcategoryColors = useMemo(() => {
+    if (!selectedCategory) return [];
+    const subcatCount = Object.keys(selectedCategory.subcategories).length;
+    return generateColorShades(selectedCategory.color, subcatCount);
+  }, [selectedCategory]);
+
   const subcategoryPieData = selectedCategory
-    ? Object.entries(selectedCategory.subcategories).map(([id, data]) => ({
-        id,
-        name: data.name,
-        value: data.minutes,
-        color: selectedCategory.color,
-        percentage: selectedCategory.minutes > 0 ? (data.minutes / selectedCategory.minutes) * 100 : 0,
-      }))
+    ? Object.entries(selectedCategory.subcategories)
+        .map(([id, data], index) => ({
+          id,
+          name: data.name,
+          value: data.minutes,
+          color: subcategoryColors[index] || selectedCategory.color,
+          percentage: selectedCategory.minutes > 0 ? (data.minutes / selectedCategory.minutes) * 100 : 0,
+        }))
+        .sort((a, b) => b.value - a.value)
     : [];
 
   function formatDuration(minutes: number): string {
@@ -51,10 +92,11 @@ export function StatsView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Statistics</h2>
+    <div className="max-w-lg mx-auto px-5 pt-6 pb-28">
+      <h2 className="text-sm font-light text-neutral-500 tracking-wider mb-8">stats</h2>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      {/* Time period selector */}
+      <div className="flex gap-2 mb-8">
         {TIME_PERIODS.map(({ value, label }) => (
           <button
             key={value}
@@ -62,10 +104,10 @@ export function StatsView() {
               setTimePeriod(value as TimePeriod);
               setSelectedCategoryId(null);
             }}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
+            className={`flex-1 py-2.5 rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500 ${
               timePeriod === value
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-neutral-700 text-white'
+                : 'text-neutral-400'
             }`}
           >
             {label}
@@ -74,105 +116,96 @@ export function StatsView() {
       </div>
 
       {entries.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No time entries for this period</p>
-          <p className="text-sm text-gray-400 mt-1">
-            Start logging your time blocks to see statistics
-          </p>
+        <div className="py-20 text-center">
+          <p className="text-neutral-400 font-light text-xs tracking-wider">no data yet</p>
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-gray-900">
+          {/* Pie Chart */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4 px-1">
+              <span className="text-[10px] font-light text-neutral-400 tracking-wider">
                 {selectedCategory ? (
                   <button
                     onClick={() => setSelectedCategoryId(null)}
-                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600"
+                    className="flex items-center gap-1.5 transition-colors duration-500"
                   >
-                    <BackIcon className="w-4 h-4" />
-                    {selectedCategory.name}
+                    <BackIcon className="w-3 h-3" />
+                    <span>{selectedCategory.name}</span>
                   </button>
                 ) : (
-                  'Time by Category'
+                  'distribution'
                 )}
-              </h3>
-              <span className="text-sm text-gray-500">
-                Total: {formatDuration(selectedCategory?.minutes || totalMinutes)}
+              </span>
+              <span className="text-[10px] text-neutral-400 font-light tracking-wider">
+                {formatDuration(selectedCategory?.minutes || totalMinutes)}
               </span>
             </div>
 
-            <div className="h-64">
+            <div className="h-52 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={selectedCategory ? subcategoryPieData : pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
+                    innerRadius={70}
+                    outerRadius={95}
+                    paddingAngle={1}
                     dataKey="value"
                     onClick={(data) => {
                       if (!selectedCategory && data.id) {
                         setSelectedCategoryId(data.id);
                       }
                     }}
-                    style={{ cursor: selectedCategory ? 'default' : 'pointer' }}
+                    style={{ cursor: selectedCategory ? 'default' : 'pointer', outline: 'none' }}
+                    animationBegin={0}
+                    animationDuration={800}
+                    animationEasing="ease-out"
                   >
                     {(selectedCategory ? subcategoryPieData : pieData).map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
-                        opacity={selectedCategory ? 0.7 + (index * 0.1) : 1}
+                        stroke="none"
+                        opacity={0.9}
                       />
                     ))}
                   </Pie>
-                  <Tooltip
-                    formatter={(value) => formatDuration(value as number)}
-                    labelFormatter={(name) => name}
-                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="font-medium text-gray-900">
-                {selectedCategory ? 'Subcategories' : 'Categories'}
-              </h3>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {(selectedCategory ? subcategoryPieData : pieData).map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    if (!selectedCategory) {
-                      setSelectedCategoryId(item.id);
-                    }
-                  }}
-                  className={`w-full flex items-center gap-3 p-4 text-left ${
-                    selectedCategory ? '' : 'hover:bg-gray-50'
-                  }`}
-                  disabled={!!selectedCategory}
-                >
-                  <div
-                    className="w-4 h-4 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {formatDuration(item.value)} ({item.percentage.toFixed(1)}%)
-                    </p>
-                  </div>
-                  {!selectedCategory && (
-                    <ChevronRightIcon className="w-5 h-5 text-gray-400" />
-                  )}
-                </button>
-              ))}
-            </div>
+          {/* Category List */}
+          <div className="space-y-1">
+            {(selectedCategory ? subcategoryPieData : pieData).map((item, index) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (!selectedCategory) {
+                    setSelectedCategoryId(item.id);
+                  }
+                }}
+                className={`w-full flex items-center gap-4 px-5 py-4 text-left rounded-2xl transition-all duration-500 animate-slideUp ${
+                  selectedCategory ? 'cursor-default' : 'cursor-pointer'
+                }`}
+                style={{ animationDelay: `${index * 60}ms` }}
+                disabled={!!selectedCategory}
+              >
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0 opacity-85"
+                  style={{ backgroundColor: item.color }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-light text-neutral-500 tracking-wide">{item.name}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xs text-neutral-500 font-light">{formatDuration(item.value)}</p>
+                  <p className="text-[10px] text-neutral-400 font-light">{item.percentage.toFixed(0)}%</p>
+                </div>
+              </button>
+            ))}
           </div>
         </>
       )}
@@ -182,16 +215,8 @@ export function StatsView() {
 
 function BackIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
     </svg>
   );
 }

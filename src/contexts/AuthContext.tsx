@@ -37,8 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        const profile = await fetchUserProfile(user.uid);
+        let profile = await fetchUserProfile(user.uid);
+        // If no profile exists, create one with default categories
+        if (!profile) {
+          profile = await createUserProfile(user);
+        }
         setUserProfile(profile);
+
       } else {
         setUserProfile(null);
       }
@@ -52,7 +57,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return docSnap.data() as UserProfile;
+      const data = docSnap.data() as UserProfile;
+
+      // Ensure categories exist
+      const existingCategories = data.categories || [];
+      const existingIds = new Set(existingCategories.map((c) => c.id));
+
+      // Add any missing default categories (for new defaults added after user signed up)
+      const missingDefaults = DEFAULT_CATEGORIES.filter((dc) => !existingIds.has(dc.id));
+
+      if (missingDefaults.length > 0) {
+        // Add missing defaults, keeping "Other" at the end
+        const otherCategory = existingCategories.find((c) => c.id === 'default-other');
+        const withoutOther = existingCategories.filter((c) => c.id !== 'default-other');
+        const newWithoutOther = missingDefaults.filter((c) => c.id !== 'default-other');
+
+        data.categories = [
+          ...withoutOther,
+          ...newWithoutOther,
+          ...(otherCategory ? [otherCategory] : missingDefaults.filter((c) => c.id === 'default-other')),
+        ];
+        // Save in background
+        setDoc(docRef, { categories: data.categories }, { merge: true }).catch(console.error);
+      }
+
+      return data;
     }
     return null;
   }
@@ -65,7 +94,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       timeBlockDuration: 30,
       categories: DEFAULT_CATEGORIES,
       createdAt: Timestamp.now(),
-      notificationsEnabled: false,
     };
 
     await setDoc(doc(db, 'users', user.uid), profile);

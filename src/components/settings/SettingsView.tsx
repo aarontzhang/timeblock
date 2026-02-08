@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import type { TimeBlockDuration, Category, Subcategory } from '../../types';
-import { TIME_BLOCK_DURATIONS } from '../../lib/constants';
+import { TIME_BLOCK_DURATIONS, COLOR_PALETTE } from '../../lib/constants';
 import { getDurationLabel } from '../../lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export function SettingsView() {
-  const { userProfile, updateUserProfile } = useAuth();
+  const { user, userProfile, updateUserProfile, logout } = useAuth();
+  const [showCategoryEditor, setShowCategoryEditor] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryColor, setNewCategoryColor] = useState('#6B7280');
+  const [newCategoryColor, setNewCategoryColor] = useState<string>(COLOR_PALETTE[0].color);
   const [showAddCategory, setShowAddCategory] = useState(false);
-
   const categories = userProfile?.categories || [];
   const duration = userProfile?.timeBlockDuration || 30;
+
+  const displayName = userProfile?.displayName || user?.displayName || 'User';
+  const email = userProfile?.email || user?.email || '';
 
   async function handleDurationChange(newDuration: TimeBlockDuration) {
     await updateUserProfile({ timeBlockDuration: newDuration });
@@ -26,7 +29,7 @@ export function SettingsView() {
       id: uuidv4(),
       name: newCategoryName.trim(),
       color: newCategoryColor,
-      subcategories: [{ id: uuidv4(), name: 'Other' }],
+      subcategories: [],
       isDefault: false,
     };
 
@@ -35,7 +38,7 @@ export function SettingsView() {
     });
 
     setNewCategoryName('');
-    setNewCategoryColor('#6B7280');
+    setNewCategoryColor(COLOR_PALETTE[0].color);
     setShowAddCategory(false);
   }
 
@@ -88,23 +91,42 @@ export function SettingsView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Settings</h2>
+    <div className="max-w-lg mx-auto px-5 pt-6 pb-28">
+      <h2 className="text-sm font-light text-neutral-500 tracking-wider mb-8">settings</h2>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="font-medium text-gray-900">Time Block Duration</h3>
-          <p className="text-sm text-gray-500">How long each time block should be</p>
+      {/* Profile */}
+      <div className="mb-8 px-1">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
+            <span className="text-xs font-light text-neutral-400">
+              {displayName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-light text-neutral-600 tracking-wide truncate">
+              {displayName}
+            </p>
+            <p className="text-[10px] text-neutral-400 font-light truncate">
+              {email}
+            </p>
+          </div>
         </div>
-        <div className="p-4 flex flex-wrap gap-2">
+      </div>
+
+      {/* Time Block Duration */}
+      <div className="mb-8">
+        <div className="px-1 mb-4">
+          <h3 className="text-[10px] font-light text-neutral-400 tracking-wider">block duration</h3>
+        </div>
+        <div className="flex gap-2">
           {TIME_BLOCK_DURATIONS.map((d) => (
             <button
               key={d}
               onClick={() => handleDurationChange(d)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`flex-1 py-3 rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500 ${
                 duration === d
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-neutral-700 text-white'
+                  : 'text-neutral-400'
               }`}
             >
               {getDurationLabel(d)}
@@ -113,72 +135,123 @@ export function SettingsView() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+      {/* Categories */}
+      <div className="mb-8">
+        <button
+          onClick={() => setShowCategoryEditor(!showCategoryEditor)}
+          className="w-full px-1 flex items-center justify-between text-left mb-4"
+        >
           <div>
-            <h3 className="font-medium text-gray-900">Categories</h3>
-            <p className="text-sm text-gray-500">Manage your activity categories</p>
+            <h3 className="text-[10px] font-light text-neutral-400 tracking-wider">categories</h3>
+            <p className="text-[10px] text-neutral-400 font-light mt-0.5">{categories.length} total</p>
           </div>
-          <button
-            onClick={() => setShowAddCategory(true)}
-            className="text-blue-500 hover:text-blue-600 text-sm font-medium"
-          >
-            + Add Category
-          </button>
-        </div>
+          <ChevronIcon className={`w-4 h-4 text-neutral-400 transition-transform duration-500 ${showCategoryEditor ? 'rotate-180' : ''}`} />
+        </button>
 
-        {showAddCategory && (
-          <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <div className="flex gap-3">
-              <input
-                type="color"
-                value={newCategoryColor}
-                onChange={(e) => setNewCategoryColor(e.target.value)}
-                className="w-10 h-10 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="Category name"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+        {showCategoryEditor && (
+          <div className="space-y-1">
+            <div className="px-1 pb-2">
               <button
-                onClick={handleAddCategory}
-                disabled={!newCategoryName.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+                onClick={() => setShowAddCategory(true)}
+                className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
               >
-                Add
+                + add category
               </button>
-              <button
-                onClick={() => {
-                  setShowAddCategory(false);
-                  setNewCategoryName('');
-                }}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-md"
-              >
-                Cancel
-              </button>
+            </div>
+
+            {showAddCategory && (
+              <div className="px-5 py-5 rounded-2xl bg-neutral-50/50">
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="category name"
+                  className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 placeholder:text-neutral-400 bg-transparent transition-colors duration-500 mb-4"
+                  autoFocus
+                />
+                <p className="text-[10px] text-neutral-400 font-light mb-3 tracking-wider">color</p>
+                <ColorPalette
+                  selectedColor={newCategoryColor}
+                  onSelect={setNewCategoryColor}
+                />
+                <div className="flex justify-end gap-3 mt-5">
+                  <button
+                    onClick={() => {
+                      setShowAddCategory(false);
+                      setNewCategoryName('');
+                      setNewCategoryColor(COLOR_PALETTE[0].color);
+                    }}
+                    className="px-4 py-2.5 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500"
+                  >
+                    cancel
+                  </button>
+                  <button
+                    onClick={handleAddCategory}
+                    disabled={!newCategoryName.trim()}
+                    className="px-5 py-2.5 bg-neutral-700 text-white rounded-2xl text-[11px] font-light tracking-wider disabled:opacity-30 transition-all duration-500"
+                  >
+                    add
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-px">
+              {[...categories].sort((a, b) => {
+                const aIsOther = a.id === 'default-other' || a.name.toLowerCase() === 'other';
+                const bIsOther = b.id === 'default-other' || b.name.toLowerCase() === 'other';
+                if (aIsOther && !bIsOther) return 1;
+                if (!aIsOther && bIsOther) return -1;
+                return 0;
+              }).map((category) => (
+                <CategoryItem
+                  key={category.id}
+                  category={category}
+                  isEditing={editingCategory?.id === category.id}
+                  onEdit={() => setEditingCategory(category)}
+                  onCancelEdit={() => setEditingCategory(null)}
+                  onUpdate={(updates) => handleUpdateCategory(category.id, updates)}
+                  onDelete={() => handleDeleteCategory(category.id)}
+                  onAddSubcategory={(name) => handleAddSubcategory(category.id, name)}
+                  onDeleteSubcategory={(subId) => handleDeleteSubcategory(category.id, subId)}
+                />
+              ))}
             </div>
           </div>
         )}
-
-        <div className="divide-y divide-gray-100">
-          {categories.map((category) => (
-            <CategoryItem
-              key={category.id}
-              category={category}
-              isEditing={editingCategory?.id === category.id}
-              onEdit={() => setEditingCategory(category)}
-              onCancelEdit={() => setEditingCategory(null)}
-              onUpdate={(updates) => handleUpdateCategory(category.id, updates)}
-              onDelete={() => handleDeleteCategory(category.id)}
-              onAddSubcategory={(name) => handleAddSubcategory(category.id, name)}
-              onDeleteSubcategory={(subId) => handleDeleteSubcategory(category.id, subId)}
-            />
-          ))}
-        </div>
       </div>
+
+      {/* Sign Out */}
+      <button
+        onClick={logout}
+        className="w-full py-4 text-neutral-400 font-light text-[11px] tracking-wider transition-colors duration-500"
+      >
+        sign out
+      </button>
+    </div>
+  );
+}
+
+interface ColorPaletteProps {
+  selectedColor: string;
+  onSelect: (color: string) => void;
+}
+
+function ColorPalette({ selectedColor, onSelect }: ColorPaletteProps) {
+  return (
+    <div className="flex flex-wrap gap-2.5">
+      {COLOR_PALETTE.map(({ color }) => (
+        <button
+          key={color}
+          onClick={() => onSelect(color)}
+          className={`w-6 h-6 rounded-full transition-all duration-500 ${
+            selectedColor.toLowerCase() === color.toLowerCase()
+              ? 'ring-1 ring-offset-2 ring-neutral-400 scale-110'
+              : 'opacity-50'
+          }`}
+          style={{ backgroundColor: color }}
+        />
+      ))}
     </div>
   );
 }
@@ -221,85 +294,83 @@ function CategoryItem({
     }
   }
 
+  if (isEditing) {
+    return (
+      <div className="px-5 py-5 rounded-2xl bg-neutral-50/50">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 bg-transparent transition-colors duration-500 mb-4"
+        />
+        <p className="text-[10px] text-neutral-300 font-light mb-3 tracking-wider">color</p>
+        <ColorPalette selectedColor={color} onSelect={setColor} />
+        <div className="flex justify-end gap-3 mt-5">
+          <button
+            onClick={onCancelEdit}
+            className="px-4 py-2.5 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500"
+          >
+            cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-5 py-2.5 bg-neutral-700 text-white rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500"
+          >
+            save
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-4">
+    <div className="px-5 py-4 rounded-2xl">
       <div className="flex items-center gap-3">
-        {isEditing ? (
-          <>
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="w-8 h-8 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="flex-1 px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={handleSave}
-              className="text-blue-500 hover:text-blue-600 text-sm"
-            >
-              Save
-            </button>
-            <button
-              onClick={onCancelEdit}
-              className="text-gray-500 hover:text-gray-600 text-sm"
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <>
-            <div
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: category.color }}
-            />
-            <span className="flex-1 font-medium text-gray-900">{category.name}</span>
-            <button
-              onClick={onEdit}
-              className="text-gray-400 hover:text-gray-600 text-sm"
-            >
-              Edit
-            </button>
-            {!category.isDefault && (
-              <button
-                onClick={onDelete}
-                className="text-red-400 hover:text-red-600 text-sm"
-              >
-                Delete
-              </button>
-            )}
-          </>
+        <div
+          className="w-[3px] h-5 rounded-full flex-shrink-0 opacity-85"
+          style={{ backgroundColor: category.color }}
+        />
+        <span className="flex-1 text-xs font-light text-neutral-500 tracking-wide">{category.name}</span>
+        <button
+          onClick={onEdit}
+          className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+        >
+          edit
+        </button>
+        {!category.isDefault && (
+          <button
+            onClick={onDelete}
+            className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+          >
+            remove
+          </button>
         )}
       </div>
 
-      <div className="mt-3 ml-7">
+      <div className="mt-3 ml-4">
         <div className="flex flex-wrap gap-2">
           {category.subcategories.map((sub) => (
             <div
               key={sub.id}
-              className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px]"
             >
-              <span className="text-gray-700">{sub.name}</span>
+              <span className="text-neutral-400 font-light">{sub.name}</span>
               <button
                 onClick={() => onDeleteSubcategory(sub.id)}
-                className="text-gray-400 hover:text-red-500 ml-1"
+                className="text-neutral-400 transition-colors duration-500"
               >
-                ×
+                <XIcon className="w-3 h-3" />
               </button>
             </div>
           ))}
           {showAddSub ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={newSubName}
                 onChange={(e) => setNewSubName(e.target.value)}
-                placeholder="Name"
-                className="w-24 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="name"
+                className="w-24 px-0 py-1.5 text-[10px] border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-neutral-500 bg-transparent transition-colors duration-500"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleAddSub();
@@ -311,21 +382,37 @@ function CategoryItem({
               />
               <button
                 onClick={handleAddSub}
-                className="text-blue-500 hover:text-blue-600 text-sm"
+                className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
               >
-                Add
+                add
               </button>
             </div>
           ) : (
             <button
               onClick={() => setShowAddSub(true)}
-              className="text-blue-500 hover:text-blue-600 text-sm"
+              className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
             >
-              + Add
+              + add
             </button>
           )}
         </div>
       </div>
     </div>
+  );
+}
+
+function ChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
   );
 }

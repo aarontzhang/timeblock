@@ -20,14 +20,22 @@ export interface UserProfile {
   timeBlockDuration: 15 | 30 | 60 | 120;
   categories: Category[];
   createdAt: Timestamp;
-  notificationsEnabled: boolean;
+}
+
+export interface CategorySelection {
+  categoryId: string;
+  subcategoryId?: string;
+  customSubcategory?: string;
 }
 
 export interface TimeEntry {
   id: string;
   userId: string;
-  categoryId: string;
-  subcategoryId: string;
+  // Support for multiple categories (new)
+  categories?: CategorySelection[];
+  // Legacy single category fields (for backward compatibility)
+  categoryId?: string;
+  subcategoryId?: string;
   customSubcategory?: string;
   startTime: Timestamp;
   endTime: Timestamp;
@@ -43,6 +51,7 @@ export interface TimeBlock {
   entry?: TimeEntry;
   isCurrent: boolean;
   isPast: boolean;
+  isContinued?: boolean; // True if this block's entry is inherited from a previous block
 }
 
 export type TimePeriod = '1d' | '3d' | '1w' | '1m' | 'custom';

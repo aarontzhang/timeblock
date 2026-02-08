@@ -45,24 +45,36 @@ export function TimeEntriesProvider({ children }: { children: ReactNode }) {
       orderBy('startTime', 'desc')
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newEntries: TimeEntry[] = [];
-      snapshot.forEach((doc) => {
-        newEntries.push({ id: doc.id, ...doc.data() } as TimeEntry);
-      });
-      setEntries(newEntries);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const newEntries: TimeEntry[] = [];
+        snapshot.forEach((doc) => {
+          newEntries.push({ id: doc.id, ...doc.data() } as TimeEntry);
+        });
+        setEntries(newEntries);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Firestore query error:', error);
+        setLoading(false);
+      }
+    );
 
     return unsubscribe;
   }, [user]);
 
   async function addEntry(entry: Omit<TimeEntry, 'id' | 'createdAt'>): Promise<string> {
-    const docRef = await addDoc(collection(db, 'timeEntries'), {
-      ...entry,
-      createdAt: Timestamp.now(),
-    });
-    return docRef.id;
+    try {
+      const docRef = await addDoc(collection(db, 'timeEntries'), {
+        ...entry,
+        createdAt: Timestamp.now(),
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Failed to add entry:', error);
+      throw error;
+    }
   }
 
   async function updateEntry(id: string, updates: Partial<TimeEntry>) {
