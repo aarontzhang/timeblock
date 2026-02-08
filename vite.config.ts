@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'TimeBlock',
         short_name: 'TimeBlock',
         description: 'Track your time with customizable time blocks',
-        theme_color: '#3B82F6',
-        background_color: '#ffffff',
+        theme_color: '#fafaf9',
+        background_color: '#fafaf9',
         display: 'standalone',
         icons: [
           {
