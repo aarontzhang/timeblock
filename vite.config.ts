@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png'],
+      includeAssets: ['logo.svg', 'icons/*.png'],
       manifest: {
         name: 'TimeBlock',
         short_name: 'TimeBlock',
