@@ -1,6 +1,33 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
+function getAuthErrorMessage(error: unknown): string {
+  const code = (error as { code?: string })?.code;
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+      return 'incorrect email or password';
+    case 'auth/user-not-found':
+      return 'no account found with this email';
+    case 'auth/email-already-in-use':
+      return 'an account with this email already exists';
+    case 'auth/weak-password':
+      return 'password must be at least 6 characters';
+    case 'auth/invalid-email':
+      return 'please enter a valid email address';
+    case 'auth/too-many-requests':
+      return 'too many attempts — please try again later';
+    case 'auth/unauthorized-domain':
+      return 'this domain is not authorized for sign-in';
+    case 'auth/popup-closed-by-user':
+      return 'sign-in was cancelled';
+    case 'auth/network-request-failed':
+      return 'network error — please check your connection';
+    default:
+      return 'something went wrong — please try again';
+  }
+}
+
 export function LoginForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -28,8 +55,7 @@ export function LoginForm() {
         await signUp(email, password, displayName);
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -41,8 +67,7 @@ export function LoginForm() {
     try {
       await signInWithGoogle();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
