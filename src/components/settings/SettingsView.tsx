@@ -92,21 +92,21 @@ export function SettingsView() {
 
   return (
     <div className="max-w-lg mx-auto px-5 pt-6 pb-28">
-      <h2 className="text-sm font-light text-neutral-500 tracking-wider mb-8">settings</h2>
+      <h2 className="text-sm font-light text-neutral-700 tracking-wider mb-8">settings</h2>
 
       {/* Profile */}
       <div className="mb-8 px-1">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
-            <span className="text-xs font-light text-neutral-400">
+            <span className="text-xs font-light text-neutral-500">
               {displayName.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-light text-neutral-600 tracking-wide truncate">
+            <p className="text-xs font-light text-neutral-800 tracking-wide truncate">
               {displayName}
             </p>
-            <p className="text-[10px] text-neutral-400 font-light truncate">
+            <p className="text-[11px] text-neutral-500 font-light truncate">
               {email}
             </p>
           </div>
@@ -116,7 +116,7 @@ export function SettingsView() {
       {/* Time Block Duration */}
       <div className="mb-8">
         <div className="px-1 mb-4">
-          <h3 className="text-[10px] font-light text-neutral-400 tracking-wider">block duration</h3>
+          <h3 className="text-[11px] font-light text-neutral-600 tracking-wider">block duration</h3>
         </div>
         <div className="flex gap-2">
           {TIME_BLOCK_DURATIONS.map((d) => (
@@ -125,8 +125,8 @@ export function SettingsView() {
               onClick={() => handleDurationChange(d)}
               className={`flex-1 py-3 rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500 ${
                 duration === d
-                  ? 'bg-neutral-700 text-white'
-                  : 'text-neutral-400'
+                  ? 'bg-neutral-800 text-white'
+                  : 'text-neutral-500'
               }`}
             >
               {getDurationLabel(d)}
@@ -142,10 +142,10 @@ export function SettingsView() {
           className="w-full px-1 flex items-center justify-between text-left mb-4"
         >
           <div>
-            <h3 className="text-[10px] font-light text-neutral-400 tracking-wider">categories</h3>
-            <p className="text-[10px] text-neutral-400 font-light mt-0.5">{categories.length} total</p>
+            <h3 className="text-[11px] font-light text-neutral-600 tracking-wider">categories</h3>
+            <p className="text-[11px] text-neutral-500 font-light mt-0.5">{categories.length} total</p>
           </div>
-          <ChevronIcon className={`w-4 h-4 text-neutral-400 transition-transform duration-500 ${showCategoryEditor ? 'rotate-180' : ''}`} />
+          <ChevronIcon className={`w-4 h-4 text-neutral-500 transition-transform duration-500 ${showCategoryEditor ? 'rotate-180' : ''}`} />
         </button>
 
         {showCategoryEditor && (
@@ -153,7 +153,7 @@ export function SettingsView() {
             <div className="px-1 pb-2">
               <button
                 onClick={() => setShowAddCategory(true)}
-                className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+                className="text-neutral-500 text-[11px] font-light tracking-wider transition-colors duration-500"
               >
                 + add category
               </button>
@@ -166,10 +166,10 @@ export function SettingsView() {
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="category name"
-                  className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 placeholder:text-neutral-400 bg-transparent transition-colors duration-500 mb-4"
+                  className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent transition-colors duration-500 mb-4"
                   autoFocus
                 />
-                <p className="text-[10px] text-neutral-400 font-light mb-3 tracking-wider">color</p>
+                <p className="text-[11px] text-neutral-500 font-light mb-3 tracking-wider">color</p>
                 <ColorPalette
                   selectedColor={newCategoryColor}
                   onSelect={setNewCategoryColor}
@@ -181,14 +181,14 @@ export function SettingsView() {
                       setNewCategoryName('');
                       setNewCategoryColor(COLOR_PALETTE[0].color);
                     }}
-                    className="px-4 py-2.5 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500"
+                    className="px-4 py-2.5 text-neutral-500 text-xs font-light tracking-wider transition-colors duration-500"
                   >
                     cancel
                   </button>
                   <button
                     onClick={handleAddCategory}
                     disabled={!newCategoryName.trim()}
-                    className="px-5 py-2.5 bg-neutral-700 text-white rounded-2xl text-[11px] font-light tracking-wider disabled:opacity-30 transition-all duration-500"
+                    className="px-5 py-2.5 bg-neutral-800 text-white rounded-2xl text-xs font-light tracking-wider disabled:opacity-30 transition-all duration-500"
                   >
                     add
                   </button>
@@ -224,7 +224,7 @@ export function SettingsView() {
       {/* Sign Out */}
       <button
         onClick={logout}
-        className="w-full py-4 text-neutral-400 font-light text-[11px] tracking-wider transition-colors duration-500"
+        className="w-full py-4 text-neutral-500 font-light text-xs tracking-wider transition-colors duration-500"
       >
         sign out
       </button>
@@ -301,20 +301,20 @@ function CategoryItem({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 bg-transparent transition-colors duration-500 mb-4"
+          className="w-full px-0 py-2.5 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-sm text-neutral-800 bg-transparent transition-colors duration-500 mb-4"
         />
-        <p className="text-[10px] text-neutral-300 font-light mb-3 tracking-wider">color</p>
+        <p className="text-[11px] text-neutral-500 font-light mb-3 tracking-wider">color</p>
         <ColorPalette selectedColor={color} onSelect={setColor} />
         <div className="flex justify-end gap-3 mt-5">
           <button
             onClick={onCancelEdit}
-            className="px-4 py-2.5 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500"
+            className="px-4 py-2.5 text-neutral-500 text-xs font-light tracking-wider transition-colors duration-500"
           >
             cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-5 py-2.5 bg-neutral-700 text-white rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500"
+            className="px-5 py-2.5 bg-neutral-800 text-white rounded-2xl text-xs font-light tracking-wider transition-all duration-500"
           >
             save
           </button>
@@ -330,17 +330,17 @@ function CategoryItem({
           className="w-[3px] h-5 rounded-full flex-shrink-0 opacity-85"
           style={{ backgroundColor: category.color }}
         />
-        <span className="flex-1 text-xs font-light text-neutral-500 tracking-wide">{category.name}</span>
+        <span className="flex-1 text-xs font-light text-neutral-700 tracking-wide">{category.name}</span>
         <button
           onClick={onEdit}
-          className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+          className="text-neutral-500 text-[11px] font-light tracking-wider transition-colors duration-500"
         >
           edit
         </button>
         {!category.isDefault && (
           <button
             onClick={onDelete}
-            className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+            className="text-neutral-500 text-[11px] font-light tracking-wider transition-colors duration-500"
           >
             remove
           </button>
@@ -354,10 +354,10 @@ function CategoryItem({
               key={sub.id}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px]"
             >
-              <span className="text-neutral-400 font-light">{sub.name}</span>
+              <span className="text-neutral-500 font-light">{sub.name}</span>
               <button
                 onClick={() => onDeleteSubcategory(sub.id)}
-                className="text-neutral-400 transition-colors duration-500"
+                className="text-neutral-500 transition-colors duration-500"
               >
                 <XIcon className="w-3 h-3" />
               </button>
@@ -370,7 +370,7 @@ function CategoryItem({
                 value={newSubName}
                 onChange={(e) => setNewSubName(e.target.value)}
                 placeholder="name"
-                className="w-24 px-0 py-1.5 text-[10px] border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-neutral-500 bg-transparent transition-colors duration-500"
+                className="w-24 px-0 py-1.5 text-[11px] border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-neutral-700 bg-transparent transition-colors duration-500"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleAddSub();
@@ -382,7 +382,7 @@ function CategoryItem({
               />
               <button
                 onClick={handleAddSub}
-                className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+                className="text-neutral-500 text-[11px] font-light tracking-wider transition-colors duration-500"
               >
                 add
               </button>
@@ -390,7 +390,7 @@ function CategoryItem({
           ) : (
             <button
               onClick={() => setShowAddSub(true)}
-              className="text-neutral-400 text-[10px] font-light tracking-wider transition-colors duration-500"
+              className="text-neutral-500 text-[11px] font-light tracking-wider transition-colors duration-500"
             >
               + add
             </button>

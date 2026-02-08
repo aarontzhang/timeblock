@@ -107,23 +107,23 @@ export function TimeGrid() {
       <div className="flex items-center justify-between mb-8">
         <button
           onClick={handlePrevDay}
-          className="p-3 text-neutral-400 transition-colors duration-500"
+          className="p-3 text-neutral-500 transition-colors duration-500"
           aria-label="Previous day"
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </button>
 
         <div className="flex flex-col items-center">
-          <h2 className="text-sm font-light text-neutral-500 tracking-wider">
+          <h2 className="text-sm font-light text-neutral-700 tracking-wider">
             {isToday ? 'Today' : format(selectedDate, 'EEEE')}
           </h2>
-          <p className="text-[11px] text-neutral-400 font-light mt-1">
+          <p className="text-xs text-neutral-500 font-light mt-1">
             {format(selectedDate, 'MMMM d')}
           </p>
           {!isToday && (
             <button
               onClick={handleToday}
-              className="mt-3 text-[10px] text-neutral-500 font-light tracking-wider transition-colors duration-500"
+              className="mt-3 text-[11px] text-neutral-600 font-light tracking-wider transition-colors duration-500"
             >
               today
             </button>
@@ -132,7 +132,7 @@ export function TimeGrid() {
 
         <button
           onClick={handleNextDay}
-          className="p-3 text-neutral-400 transition-colors duration-500"
+          className="p-3 text-neutral-500 transition-colors duration-500"
           aria-label="Next day"
         >
           <ChevronRightIcon className="w-4 h-4" />
@@ -164,7 +164,7 @@ export function TimeGrid() {
               >
                 <div className="w-16 flex-shrink-0 py-4 pr-4 text-right flex items-center justify-end">
                   {showTimeLabel && (
-                    <span className="text-[10px] text-neutral-400 font-light whitespace-nowrap">
+                    <span className="text-[11px] text-neutral-500 font-light whitespace-nowrap">
                       {formatTime(block.startTime)}
                     </span>
                   )}

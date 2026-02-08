@@ -93,7 +93,7 @@ export function StatsView() {
 
   return (
     <div className="max-w-lg mx-auto px-5 pt-6 pb-28">
-      <h2 className="text-sm font-light text-neutral-500 tracking-wider mb-8">stats</h2>
+      <h2 className="text-sm font-light text-neutral-700 tracking-wider mb-8">stats</h2>
 
       {/* Time period selector */}
       <div className="flex gap-2 mb-8">
@@ -106,8 +106,8 @@ export function StatsView() {
             }}
             className={`flex-1 py-2.5 rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500 ${
               timePeriod === value
-                ? 'bg-neutral-700 text-white'
-                : 'text-neutral-400'
+                ? 'bg-neutral-800 text-white'
+                : 'text-neutral-500'
             }`}
           >
             {label}
@@ -117,14 +117,14 @@ export function StatsView() {
 
       {entries.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-neutral-400 font-light text-xs tracking-wider">no data yet</p>
+          <p className="text-neutral-500 font-light text-xs tracking-wider">no data yet</p>
         </div>
       ) : (
         <>
           {/* Pie Chart */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4 px-1">
-              <span className="text-[10px] font-light text-neutral-400 tracking-wider">
+              <span className="text-[11px] font-light text-neutral-500 tracking-wider">
                 {selectedCategory ? (
                   <button
                     onClick={() => setSelectedCategoryId(null)}
@@ -137,7 +137,7 @@ export function StatsView() {
                   'distribution'
                 )}
               </span>
-              <span className="text-[10px] text-neutral-400 font-light tracking-wider">
+              <span className="text-[11px] text-neutral-500 font-light tracking-wider">
                 {formatDuration(selectedCategory?.minutes || totalMinutes)}
               </span>
             </div>
@@ -198,11 +198,11 @@ export function StatsView() {
                   style={{ backgroundColor: item.color }}
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-light text-neutral-500 tracking-wide">{item.name}</p>
+                  <p className="text-xs font-light text-neutral-700 tracking-wide">{item.name}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-xs text-neutral-500 font-light">{formatDuration(item.value)}</p>
-                  <p className="text-[10px] text-neutral-400 font-light">{item.percentage.toFixed(0)}%</p>
+                  <p className="text-xs text-neutral-700 font-light">{formatDuration(item.value)}</p>
+                  <p className="text-[11px] text-neutral-500 font-light">{item.percentage.toFixed(0)}%</p>
                 </div>
               </button>
             ))}

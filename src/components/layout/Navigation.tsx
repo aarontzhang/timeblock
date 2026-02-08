@@ -17,15 +17,15 @@ export function Navigation() {
             className={({ isActive }) =>
               `flex flex-col items-center py-2 px-6 transition-colors duration-500 ${
                 isActive
-                  ? 'text-neutral-600'
-                  : 'text-neutral-400'
+                  ? 'text-neutral-800'
+                  : 'text-neutral-500'
               }`
             }
           >
             {({ isActive }) => (
               <>
                 <Icon className={`w-[18px] h-[18px] mb-1.5 ${isActive ? 'stroke-[1.5]' : 'stroke-[1]'}`} />
-                <span className="text-[10px] font-light tracking-wider">{label}</span>
+                <span className="text-[11px] font-light tracking-wider">{label}</span>
               </>
             )}
           </NavLink>

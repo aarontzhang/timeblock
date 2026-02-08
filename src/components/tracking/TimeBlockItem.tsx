@@ -57,10 +57,10 @@ export function TimeBlockItem({ block, categories, onClick }: TimeBlockItemProps
             ))}
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-xs font-light tracking-wide ${isContinued ? 'text-neutral-400' : 'text-neutral-600'}`}>
+            <p className={`text-xs font-light tracking-wide ${isContinued ? 'text-neutral-500' : 'text-neutral-700'}`}>
               {selectedCategories.map(item => item.category?.name).join(' + ')}
             </p>
-            <p className="text-[10px] text-neutral-400 font-light tracking-wide mt-0.5">
+            <p className="text-[11px] text-neutral-500 font-light tracking-wide mt-0.5">
               {selectedCategories.length === 1
                 ? (selectedCategories[0].subcategory?.name || selectedCategories[0].customSubcategory || '')
                 : `${selectedCategories.length} activities`
@@ -76,14 +76,14 @@ export function TimeBlockItem({ block, categories, onClick }: TimeBlockItemProps
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-4">
             <div className="w-[3px] h-7 rounded-full bg-neutral-100" />
-            <span className="text-[10px] font-light tracking-wide text-neutral-400">empty</span>
+            <span className="text-[11px] font-light tracking-wide text-neutral-500">empty</span>
           </div>
         </div>
       ) : block.isCurrent ? (
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-4">
             <div className="w-[3px] h-7 rounded-full bg-neutral-400 animate-gentle-pulse" />
-            <span className="text-xs font-light text-neutral-500 tracking-wide">now</span>
+            <span className="text-xs font-light text-neutral-700 tracking-wide">now</span>
           </div>
         </div>
       ) : (

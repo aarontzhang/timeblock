@@ -146,10 +146,10 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
         <div className="px-7 pt-7 pb-5">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-light text-neutral-500 tracking-wider">
+              <h3 className="text-sm font-light text-neutral-700 tracking-wider">
                 {isEditing ? 'edit' : 'log'}
               </h3>
-              <p className="text-[10px] text-neutral-400 font-light mt-1 tracking-wide">
+              <p className="text-[11px] text-neutral-500 font-light mt-1 tracking-wide">
                 {formatTimeRange(block.startTime, block.endTime)}
               </p>
             </div>
@@ -161,7 +161,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
             </button>
           </div>
           {selections.length > 1 && (
-            <p className="text-[10px] text-neutral-400 mt-3 font-light tracking-wide">
+            <p className="text-[11px] text-neutral-500 mt-3 font-light tracking-wide">
               split between {selections.length} activities
             </p>
           )}
@@ -193,7 +193,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
                       style={{ backgroundColor: category.color }}
                     />
                     <span className={`text-xs font-light tracking-wide truncate ${
-                      isSelected ? 'text-neutral-600' : 'text-neutral-500'
+                      isSelected ? 'text-neutral-700' : 'text-neutral-600'
                     }`}>
                       {displayName}
                     </span>
@@ -210,7 +210,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
                 value={getSelection('default-other')?.customSubcategory || ''}
                 onChange={(e) => setOtherText(e.target.value)}
                 placeholder="activity name"
-                className="w-full px-5 py-3.5 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-200 font-light text-xs text-neutral-600 placeholder:text-neutral-400 transition-all duration-500"
+                className="w-full px-5 py-3.5 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-200 font-light text-sm text-neutral-800 placeholder:text-neutral-400 transition-all duration-500"
                 autoFocus
               />
             </div>
@@ -225,7 +225,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
 
             return (
               <div key={selection.categoryId}>
-                <label className="flex items-center gap-2 text-[10px] font-light text-neutral-400 mb-3 tracking-wider">
+                <label className="flex items-center gap-2 text-[11px] font-light text-neutral-600 mb-3 tracking-wider">
                   <span
                     className="inline-block w-[3px] h-3 rounded-full opacity-85"
                     style={{ backgroundColor: category.color }}
@@ -240,7 +240,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
                       className={`px-4 py-2.5 rounded-full text-[11px] font-light tracking-wide transition-all duration-500 ${
                         currentSubId === sub.id
                           ? 'bg-neutral-700 text-white'
-                          : 'bg-neutral-50 text-neutral-500'
+                          : 'bg-neutral-50 text-neutral-600'
                       }`}
                     >
                       {sub.name}
@@ -251,7 +251,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
                     className={`px-4 py-2.5 rounded-full text-[11px] font-light tracking-wide transition-all duration-500 ${
                       isOther
                         ? 'bg-neutral-700 text-white'
-                        : 'bg-neutral-50 text-neutral-500'
+                        : 'bg-neutral-50 text-neutral-600'
                     }`}
                   >
                     Other
@@ -264,7 +264,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
                     value={selection.customSubcategory || ''}
                     onChange={(e) => setSubcategory(category.id, 'other', e.target.value)}
                     placeholder="custom activity"
-                    className="mt-3 w-full px-5 py-3.5 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-200 font-light text-xs text-neutral-600 placeholder:text-neutral-400 transition-all duration-500"
+                    className="mt-3 w-full px-5 py-3.5 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-200 font-light text-sm text-neutral-800 placeholder:text-neutral-400 transition-all duration-500"
                     autoFocus
                   />
                 )}
@@ -279,7 +279,7 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
             <button
               onClick={handleDelete}
               disabled={saving}
-              className="px-4 py-3 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500 disabled:opacity-50"
+              className="px-4 py-3 text-neutral-500 text-xs font-light tracking-wider transition-colors duration-500 disabled:opacity-50"
             >
               delete
             </button>
@@ -288,14 +288,14 @@ export function LogPrompt({ block, onClose }: LogPromptProps) {
           <button
             onClick={onClose}
             disabled={saving}
-            className="px-5 py-3 text-neutral-400 text-[11px] font-light tracking-wider transition-colors duration-500 disabled:opacity-50"
+            className="px-5 py-3 text-neutral-500 text-xs font-light tracking-wider transition-colors duration-500 disabled:opacity-50"
           >
             cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!canSave || saving}
-            className="px-6 py-3 bg-neutral-700 text-white rounded-2xl text-[11px] font-light tracking-wider transition-all duration-500 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-neutral-800 text-white rounded-2xl text-xs font-light tracking-wider transition-all duration-500 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {saving ? 'saving' : 'save'}
           </button>
