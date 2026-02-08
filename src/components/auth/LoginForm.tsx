@@ -77,17 +77,21 @@ export function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-stone-50 px-6">
       <div className="max-w-sm w-full">
         <div className="text-center mb-14">
-          <h1 className="text-sm font-light text-neutral-400 tracking-[0.3em] uppercase">timeblock</h1>
-          <p className="text-neutral-400 mt-3 font-light text-[11px] tracking-wider">track your time, understand your day</p>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-neutral-800 mx-auto mb-5 w-8 h-8">
+            <line x1="12" y1="12" x2="12" y2="5" />
+            <line x1="12" y1="12" x2="17" y2="15" />
+          </svg>
+          <h1 className="text-sm font-light text-neutral-800 tracking-[0.3em] uppercase">timeblock</h1>
+          <p className="text-neutral-500 mt-3 font-light text-xs tracking-wider">track your time, understand your day</p>
         </div>
 
         <div className="px-2">
-          <h2 className="text-xs font-light text-neutral-500 tracking-wider mb-8">
+          <h2 className="text-sm font-light text-neutral-700 tracking-wider mb-8">
             {isLogin ? 'welcome back' : 'create account'}
           </h2>
 
           {error && (
-            <div className="text-red-400 py-3 mb-5 text-[11px] font-light tracking-wide">
+            <div className="text-red-500 py-3 mb-5 text-xs font-light tracking-wide">
               {error}
             </div>
           )}
@@ -95,7 +99,7 @@ export function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div>
-                <label htmlFor="displayName" className="block text-[10px] font-light text-neutral-400 mb-2 tracking-wider">
+                <label htmlFor="displayName" className="block text-[11px] font-light text-neutral-600 mb-2 tracking-wider">
                   name
                 </label>
                 <input
@@ -103,14 +107,14 @@ export function LoginForm() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
+                  className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
                   placeholder="your name"
                 />
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-[10px] font-light text-neutral-400 mb-2 tracking-wider">
+              <label htmlFor="email" className="block text-[11px] font-light text-neutral-600 mb-2 tracking-wider">
                 email
               </label>
               <input
@@ -118,14 +122,14 @@ export function LoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
+                className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-[10px] font-light text-neutral-400 mb-2 tracking-wider">
+              <label htmlFor="password" className="block text-[11px] font-light text-neutral-600 mb-2 tracking-wider">
                 password
               </label>
               <input
@@ -133,7 +137,7 @@ export function LoginForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-xs text-neutral-600 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
+                className="w-full px-0 py-3 border-b border-neutral-200 focus:outline-none focus:border-neutral-400 font-light text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent transition-colors duration-500"
                 placeholder="••••••••"
                 required
                 minLength={6}
@@ -143,7 +147,7 @@ export function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-neutral-700 text-white py-3.5 px-4 rounded-2xl font-light text-[11px] tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-500 mt-8"
+              className="w-full bg-neutral-800 text-white py-3.5 px-4 rounded-2xl font-light text-xs tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-500 mt-8"
             >
               {loading ? 'loading' : isLogin ? 'sign in' : 'create account'}
             </button>
@@ -155,14 +159,14 @@ export function LoginForm() {
                 <div className="w-full border-t border-neutral-100" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-4 bg-stone-50 text-neutral-400 font-light text-[10px] tracking-wider">or</span>
+                <span className="px-4 bg-stone-50 text-neutral-500 font-light text-[11px] tracking-wider">or</span>
               </div>
             </div>
 
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="mt-8 w-full flex items-center justify-center gap-3 border border-neutral-100 text-neutral-500 py-3.5 px-4 rounded-2xl font-light text-[11px] tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-500"
+              className="mt-8 w-full flex items-center justify-center gap-3 border border-neutral-200 text-neutral-700 py-3.5 px-4 rounded-2xl font-light text-xs tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-500"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -174,14 +178,14 @@ export function LoginForm() {
             </button>
           </div>
 
-          <p className="mt-10 text-center text-[10px] text-neutral-400 font-light tracking-wider">
+          <p className="mt-10 text-center text-[11px] text-neutral-500 font-light tracking-wider">
             {isLogin ? "don't have an account? " : 'already have an account? '}
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
                 setError('');
               }}
-              className="text-neutral-600 font-light transition-colors duration-500"
+              className="text-neutral-800 font-light transition-colors duration-500"
             >
               {isLogin ? 'sign up' : 'sign in'}
             </button>
